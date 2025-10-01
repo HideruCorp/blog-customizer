@@ -16,11 +16,20 @@ const domNode = document.getElementById('root') as HTMLDivElement;
 const root = createRoot(domNode);
 
 const App = () => {
-	const [articleState /* TODO: use setArticleState */] =
+	const [articleState, setArticleState] =
 		useState<ArticleStateType>(defaultArticleState);
 	const [isFormOpen, setIsFormOpen] = useState(false);
 
 	const handleFormToggle = () => setIsFormOpen((prev: boolean) => !prev);
+
+	const handleFormSubmit = (newState: ArticleStateType) => {
+		setArticleState(newState);
+	};
+
+	const handleFormReset = () => {
+		setArticleState(defaultArticleState);
+	};
+
 	return (
 		<main
 			className={clsx(styles.main)}
@@ -33,7 +42,12 @@ const App = () => {
 					'--bg-color': articleState.backgroundColor.value,
 				} as CSSProperties
 			}>
-			<ArticleParamsForm isFormOpen={isFormOpen} onToggle={handleFormToggle} />
+			<ArticleParamsForm
+				isFormOpen={isFormOpen}
+				onToggle={handleFormToggle}
+				onSubmit={handleFormSubmit}
+				onReset={handleFormReset}
+			/>
 			<Article />
 		</main>
 	);
