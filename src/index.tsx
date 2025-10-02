@@ -18,9 +18,6 @@ const root = createRoot(domNode);
 const App = () => {
 	const [articleState, setArticleState] =
 		useState<ArticleStateType>(defaultArticleState);
-	const [isFormOpen, setIsFormOpen] = useState(false);
-
-	const handleFormToggle = () => setIsFormOpen((prev: boolean) => !prev);
 
 	const handleFormSubmit = (newState: ArticleStateType) => {
 		setArticleState(newState);
@@ -43,8 +40,6 @@ const App = () => {
 				} as CSSProperties
 			}>
 			<ArticleParamsForm
-				isFormOpen={isFormOpen}
-				onToggle={handleFormToggle}
 				onSubmit={handleFormSubmit}
 				onReset={handleFormReset}
 			/>

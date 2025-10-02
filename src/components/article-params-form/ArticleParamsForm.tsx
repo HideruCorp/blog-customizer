@@ -14,26 +14,28 @@ import { RadioGroup } from 'src/ui/radio-group';
 import { Select } from 'src/ui/select';
 import { Separator } from 'src/ui/separator';
 
-import { FormEvent, useEffect, useRef, useState } from 'react';
+import { FormEvent, useState } from 'react';
+import { useDisclosure } from 'src/hooks/useDisclosure';
 import clsx from 'clsx';
 import styles from './ArticleParamsForm.module.scss';
 
 type ArticleParamsFormProps = {
-	isFormOpen: boolean;
-	onToggle: () => void;
 	onSubmit?: (state: ArticleStateType) => void;
 	onReset?: () => void;
 };
 
 export const ArticleParamsForm = ({
-	isFormOpen,
-	onToggle,
 	onSubmit,
 	onReset,
 }: ArticleParamsFormProps) => {
 	const [formState, setFormState] =
 		useState<ArticleStateType>(defaultArticleState);
-	const sidebarRef = useRef<HTMLElement>(null);
+
+	const {
+		ref: sidebarRef,
+		isOpen: isSidebarOpen,
+		toggle: toggleSidebar,
+	} = useDisclosure(false);
 
 	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -44,43 +46,15 @@ export const ArticleParamsForm = ({
 		setFormState(defaultArticleState);
 		onReset?.();
 	};
-
-	useEffect(() => {
-		const handleClickOutside = (event: MouseEvent) => {
-			if (
-				isFormOpen &&
-				sidebarRef.current &&
-				!sidebarRef.current.contains(event.target as Node)
-			) {
-				onToggle();
-			}
-		};
-
-		if (isFormOpen) {
-			document.addEventListener('mousedown', handleClickOutside);
-			return () =>
-				document.removeEventListener('mousedown', handleClickOutside);
-		}
-	}, [isFormOpen, onToggle]);
-
-	useEffect(() => {
-		const handleEscapeKey = (event: KeyboardEvent) => {
-			if (event.key === 'Escape' && isFormOpen) {
-				onToggle();
-			}
-		};
-
-		if (isFormOpen) {
-			document.addEventListener('keydown', handleEscapeKey);
-			return () => document.removeEventListener('keydown', handleEscapeKey);
-		}
-	}, [isFormOpen, onToggle]);
 	return (
 		<>
-			<ArrowButton isOpen={isFormOpen} onClick={onToggle} />
+			<ArrowButton isOpen={isSidebarOpen} onClick={toggleSidebar} />
 			<aside
 				ref={sidebarRef}
-				className={clsx(styles.container, isFormOpen && styles.container_open)}>
+				className={clsx(
+					styles.container,
+					isSidebarOpen && styles.container_open
+				)}>
 				<form
 					className={styles.form}
 					onSubmit={handleSubmit}
