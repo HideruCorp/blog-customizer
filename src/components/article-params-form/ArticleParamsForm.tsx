@@ -14,7 +14,7 @@ import { RadioGroup } from 'src/ui/radio-group';
 import { Select } from 'src/ui/select';
 import { Separator } from 'src/ui/separator';
 
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
 import styles from './ArticleParamsForm.module.scss';
 
@@ -33,6 +33,7 @@ export const ArticleParamsForm = ({
 }: ArticleParamsFormProps) => {
 	const [formState, setFormState] =
 		useState<ArticleStateType>(defaultArticleState);
+	const sidebarRef = useRef<HTMLElement>(null);
 
 	const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -43,10 +44,42 @@ export const ArticleParamsForm = ({
 		setFormState(defaultArticleState);
 		onReset?.();
 	};
+
+	useEffect(() => {
+		const handleClickOutside = (event: MouseEvent) => {
+			if (
+				isFormOpen &&
+				sidebarRef.current &&
+				!sidebarRef.current.contains(event.target as Node)
+			) {
+				onToggle();
+			}
+		};
+
+		if (isFormOpen) {
+			document.addEventListener('mousedown', handleClickOutside);
+			return () =>
+				document.removeEventListener('mousedown', handleClickOutside);
+		}
+	}, [isFormOpen, onToggle]);
+
+	useEffect(() => {
+		const handleEscapeKey = (event: KeyboardEvent) => {
+			if (event.key === 'Escape' && isFormOpen) {
+				onToggle();
+			}
+		};
+
+		if (isFormOpen) {
+			document.addEventListener('keydown', handleEscapeKey);
+			return () => document.removeEventListener('keydown', handleEscapeKey);
+		}
+	}, [isFormOpen, onToggle]);
 	return (
 		<>
 			<ArrowButton isOpen={isFormOpen} onClick={onToggle} />
 			<aside
+				ref={sidebarRef}
 				className={clsx(styles.container, isFormOpen && styles.container_open)}>
 				<form
 					className={styles.form}
@@ -60,7 +93,6 @@ export const ArticleParamsForm = ({
 							setFormState((prev) => ({ ...prev, fontFamilyOption: option }))
 						}
 					/>
-					<Separator />
 
 					<RadioGroup
 						name='fontSize'
@@ -71,7 +103,6 @@ export const ArticleParamsForm = ({
 							setFormState((prev) => ({ ...prev, fontSizeOption: option }))
 						}
 					/>
-					<Separator />
 
 					<Select
 						title='Цвет шрифта'
@@ -91,7 +122,6 @@ export const ArticleParamsForm = ({
 							setFormState((prev) => ({ ...prev, backgroundColor: option }))
 						}
 					/>
-					<Separator />
 
 					<RadioGroup
 						name='contentWidth'
