@@ -13,6 +13,7 @@ import { Button } from 'src/ui/button';
 import { RadioGroup } from 'src/ui/radio-group';
 import { Select } from 'src/ui/select';
 import { Separator } from 'src/ui/separator';
+import { Text } from 'src/ui/text';
 
 import { FormEvent, useState } from 'react';
 import { useDisclosure } from 'src/hooks/useDisclosure';
@@ -51,10 +52,9 @@ export const ArticleParamsForm = ({
 			<ArrowButton isOpen={isSidebarOpen} onClick={toggleSidebar} />
 			<aside
 				ref={sidebarRef}
-				className={clsx(
-					styles.container,
-					isSidebarOpen && styles.container_open
-				)}
+				className={clsx(styles.container, {
+					[styles.container_open]: isSidebarOpen,
+				})}
 				role='dialog'
 				aria-modal='true'
 				aria-label='Настройки внешнего вида статьи'
@@ -63,6 +63,9 @@ export const ArticleParamsForm = ({
 					className={styles.form}
 					onSubmit={handleSubmit}
 					onReset={handleReset}>
+					<Text as='h2' size={31} weight={800} uppercase>
+						Задайте параметры
+					</Text>
 					<Select
 						title='Шрифт'
 						options={fontFamilyOptions}
@@ -101,8 +104,7 @@ export const ArticleParamsForm = ({
 						}
 					/>
 
-					<RadioGroup
-						name='contentWidth'
+					<Select
 						title='Ширина контента'
 						options={contentWidthArr}
 						selected={formState.contentWidth}
