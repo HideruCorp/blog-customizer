@@ -54,7 +54,11 @@ export const ArticleParamsForm = ({
 				className={clsx(
 					styles.container,
 					isSidebarOpen && styles.container_open
-				)}>
+				)}
+				role='dialog'
+				aria-modal='true'
+				aria-label='Настройки внешнего вида статьи'
+				aria-hidden={!isSidebarOpen}>
 				<form
 					className={styles.form}
 					onSubmit={handleSubmit}
