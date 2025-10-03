@@ -20,6 +20,8 @@ jobs:
           node-version: 20
       - run: npm install
       - run: npm run build
+        env:
+          PUBLIC_PATH: /${{ github.event.repository.name }}/
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist

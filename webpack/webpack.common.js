@@ -5,6 +5,7 @@ const path = require('path'); //для того чтобы превратить 
 const webpack = require('webpack');
 
 const production = process.env.NODE_ENV === 'production';
+const publicPath = process.env.PUBLIC_PATH || '/';
 
 module.exports = {
 	entry: path.resolve(__dirname, '..', './src/index.tsx'), //точка входа в наше приложение содержит абсолютный путь к index.ts
@@ -13,7 +14,7 @@ module.exports = {
 		filename: production
 			? 'static/scripts/[name].[contenthash].js'
 			: 'static/scripts/[name].js', // имя нашего бандла
-		publicPath: '/',
+		publicPath: publicPath,
 	},
 	//Нужно помочь вебпаку научится работать с jsx и tsx файлами для этого используют ts loader
 	module: {
@@ -51,7 +52,14 @@ module.exports = {
 			{
 				test: /\.(sa|sc|c)ss$/,
 				use: [
-					production ? MiniCssExtractPlugin.loader : 'style-loader',
+					production
+						? {
+								loader: MiniCssExtractPlugin.loader,
+								options: {
+									publicPath: publicPath,
+								},
+						  }
+						: 'style-loader',
 					{
 						loader: 'css-loader',
 						options: {
